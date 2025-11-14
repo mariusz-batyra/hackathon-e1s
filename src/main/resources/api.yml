@@ -29,7 +29,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EventDocument'
+                $ref: '#/components/schemas/EventDto'
 
   ##############################
   # USER TASKS
@@ -39,6 +39,13 @@ paths:
     get:
       summary: Get tasks assigned to current user
       tags: [Tasks]
+      parameters:
+      - name: X-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+        description: User ID for authentication
       responses:
         '200':
           description: List of tasks
@@ -47,7 +54,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TaskDocument'
+                  $ref: '#/components/schemas/TaskDto'
 
   /tasks/{taskId}/done:
     post:
@@ -85,6 +92,13 @@ paths:
     get:
       summary: Get user's category blacklist
       tags: [User Settings]
+      parameters:
+      - name: X-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+        description: User ID for authentication
       responses:
         '200':
           description: List of blacklisted categories
@@ -98,6 +112,13 @@ paths:
     put:
       summary: Replace user's category blacklist
       tags: [User Settings]
+      parameters:
+      - name: X-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+        description: User ID for authentication
       requestBody:
         required: true
         content:
@@ -109,11 +130,24 @@ paths:
       responses:
         '200':
           description: Updated blacklist
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
 
   /users/me/notification-channels:
     get:
       summary: Get user's notification channels
       tags: [User Settings]
+      parameters:
+      - name: X-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+        description: User ID for authentication
       responses:
         '200':
           description: Notification channels
@@ -127,6 +161,13 @@ paths:
     put:
       summary: Replace user's notification channels
       tags: [User Settings]
+      parameters:
+      - name: X-User-Id
+        in: header
+        required: true
+        schema:
+          type: string
+        description: User ID for authentication
       requestBody:
         required: true
         content:
@@ -138,6 +179,38 @@ paths:
       responses:
         '200':
           description: Updated notification channels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationChannel'
+
+  ##############################
+  # STATISTICS
+  ##############################
+
+  /stats:
+    get:
+      summary: Get system statistics
+      tags: [Statistics]
+      parameters:
+      - name: expiringHours
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+          default: 24
+        description: Threshold in hours for expiring tasks
+      responses:
+        '200':
+          description: Statistics data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+
 
 components:
 
@@ -148,55 +221,58 @@ components:
   schemas:
 
     Category:
-      type: object
-      properties:
-        name:
-          type: string
-        required:
-          type: boolean
-        notificationPolicy:
-          type: string
-          enum: [STRICT, MEDIUM, RELAXED]
-      required: [name]
+      type: string
+      enum:
+      - SECURITY
+      - SALES
+      - GENERAL
+      - PARTY
+      - ONBOARDING
+      - TRAINING
+      - HR
+      - IT
+      - COMPLIANCE
 
     GroupEnum:
       type: string
       enum:
-      - LOB
-      - sales
-      - backoffice
+      - UoP
+      - SALES
+      - BACKOFFICE
       - B2B
       - DEV
-      - TEL
       - QA
 
     NotificationChannel:
       type: string
       enum:
-      - email
-      - sms
-      - whatsapp
+      - EMAIL
+      - SMS
+      - WHATSAPP
+      - MS_TEAMS
 
     ##################################
     # DOCUMENTS (Mongo)
     ##################################
 
-    EventDocument:
+    EventDto:
       type: object
       properties:
         id:
           type: string
+          nullable: true
         category:
           $ref: '#/components/schemas/Category'
         title:
           type: string
         description:
           type: string
+          nullable: true
         groups:
           type: array
           items:
             $ref: '#/components/schemas/GroupEnum'
-      required: [category, title]
+      required: [category, title, groups]
 
     EventCreateRequest:
       type: object
@@ -207,32 +283,38 @@ components:
           type: string
         description:
           type: string
+          nullable: true
         groups:
           type: array
           items:
             $ref: '#/components/schemas/GroupEnum'
-      required: [category, title]
+          default: []
+      required: [category, title, groups]
 
-    TaskDocument:
+    TaskDto:
       type: object
       properties:
         id:
           type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
         deadline:
           type: string
           format: date-time
+          nullable: true
         event:
-          $ref: '#/components/schemas/EventDocument'
+          $ref: '#/components/schemas/EventDto'
         status:
           type: string
           enum: [NEW, DONE, REJECTED]
         actionUrl:
           type: string
+          nullable: true
         employeeId:
           type: string
+      required: [createdAt, event, status, employeeId]
 
     EmployeeDocument:
       type: object
@@ -257,3 +339,97 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NotificationChannel'
+
+
+    ##################################
+    # STATISTICS SCHEMAS
+    ##################################
+
+    StatsResponse:
+      type: object
+      properties:
+        overallDonePercentage:
+          type: number
+          format: double
+        overallRejectedPercentage:
+          type: number
+          format: double
+        pendingPercentage:
+          type: number
+          format: double
+        expiringSoonPercentage:
+          type: number
+          format: double
+        categoryRates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryCompletionRate'
+        alertEmployees:
+          type: array
+          items:
+            type: string
+        totalDeliveredNotifications:
+          type: integer
+          format: int64
+        totalUniqueClicks:
+          type: integer
+          format: int64
+        averageCompletionHours:
+          type: number
+          format: double
+          nullable: true
+        channelEffectiveness:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelEffectiveness'
+        channelPreferences:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelPreferenceSlice'
+
+    CategoryCompletionRate:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/Category'
+        donePercentage:
+          type: number
+          format: double
+        rejectedPercentage:
+          type: number
+          format: double
+        total:
+          type: integer
+          format: int64
+        done:
+          type: integer
+          format: int64
+        rejected:
+          type: integer
+          format: int64
+
+    ChannelEffectiveness:
+      type: object
+      properties:
+        channel:
+          $ref: '#/components/schemas/NotificationChannel'
+        completionRate:
+          type: number
+          format: double
+        tasks:
+          type: integer
+          format: int64
+
+    ChannelPreferenceSlice:
+      type: object
+      properties:
+        channel:
+          $ref: '#/components/schemas/NotificationChannel'
+        percentage:
+          type: number
+          format: double
+        employees:
+          type: integer
+          format: int64
+
+
