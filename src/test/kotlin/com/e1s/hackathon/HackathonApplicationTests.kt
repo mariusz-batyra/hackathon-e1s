@@ -8,6 +8,7 @@ class HackathonApplicationTests {
 
 	@Test
 	fun contextLoads() {
+		// Test passes when Spring context loads successfully
 	}
 
 }

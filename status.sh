@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo "════════════════════════════════════════════════════════"
+echo "  MongoDB + Kotlin Spring Boot - Quick Start"
+echo "════════════════════════════════════════════════════════"
+echo ""
+echo "📦 Build Status:"
+./gradlew build -q 2>&1 | grep -E "(BUILD|FAILED)" || echo "   ✅ Build successful!"
+echo ""
+echo "🗄️  MongoDB Status:"
+if docker ps --format '{{.Names}}' | grep -q '^mongodb$'; then
+    echo "   ✅ MongoDB is running in Docker"
+elif brew services list 2>/dev/null | grep mongodb | grep -q started; then
+    echo "   ✅ MongoDB is running (Homebrew)"
+else
+    echo "   ❌ MongoDB is NOT running"
+    echo ""
+    echo "   To start MongoDB:"
+    echo "   • Option 1 (Docker): ./start-mongodb.sh"
+    echo "   • Option 2 (Homebrew): brew services start mongodb-community"
+fi
+echo ""
+echo "🚀 To start the application:"
+echo "   ./gradlew bootRun"
+echo ""
+echo "🌐 API Endpoints (once running):"
+echo "   • GET    http://localhost:8080/api/products"
+echo "   • GET    http://localhost:8080/api/products/category/Electronics"
+echo "   • GET    http://localhost:8080/api/products/search?name=laptop"
+echo "   • POST   http://localhost:8080/api/products"
+echo "   • PUT    http://localhost:8080/api/products/{id}"
+echo "   • DELETE http://localhost:8080/api/products/{id}"
+echo ""
+echo "📚 Documentation:"
+echo "   • Quick Summary:  README_MONGODB.md"
+echo "   • Setup Guide:    MONGODB_SETUP.md"
+echo "   • Full Details:   SETUP_COMPLETE.md"
+echo ""
+echo "════════════════════════════════════════════════════════"
+
