@@ -1,0 +1,259 @@
+openapi: 3.0.3
+info:
+  title: Task & Event Management API
+  version: 1.0.0
+
+servers:
+- url: /api
+
+paths:
+
+  ##############################
+  # EVENT MANAGEMENT (ADMIN)
+  ##############################
+
+  /events:
+    post:
+      summary: Create new event
+      tags: [Events]
+      description: Admin creates an event. Tasks will be generated for groups/employees assigned to the event.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreateRequest'
+      responses:
+        '201':
+          description: Event created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDocument'
+
+  ##############################
+  # USER TASKS
+  ##############################
+
+  /tasks:
+    get:
+      summary: Get tasks assigned to current user
+      tags: [Tasks]
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDocument'
+
+  /tasks/{taskId}/done:
+    post:
+      summary: Mark task as done
+      tags: [Tasks]
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Task completed
+
+  /tasks/{taskId}/reject:
+    post:
+      summary: Reject a task
+      tags: [Tasks]
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Task rejected
+
+  ##############################
+  # USER MANAGEMENT SETTINGS
+  ##############################
+
+  /users/me/categories/blacklist:
+    get:
+      summary: Get user's category blacklist
+      tags: [User Settings]
+      responses:
+        '200':
+          description: List of blacklisted categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+
+    put:
+      summary: Replace user's category blacklist
+      tags: [User Settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: Updated blacklist
+
+  /users/me/notification-channels:
+    get:
+      summary: Get user's notification channels
+      tags: [User Settings]
+      responses:
+        '200':
+          description: Notification channels
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NotificationChannel'
+
+    put:
+      summary: Replace user's notification channels
+      tags: [User Settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NotificationChannel'
+      responses:
+        '200':
+          description: Updated notification channels
+
+components:
+
+  ##################################
+  # ENUMS
+  ##################################
+
+  schemas:
+
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+        required:
+          type: boolean
+        notificationPolicy:
+          type: string
+          enum: [STRICT, MEDIUM, RELAXED]
+      required: [name]
+
+    GroupEnum:
+      type: string
+      enum:
+      - LOB
+      - sales
+      - backoffice
+      - B2B
+      - DEV
+      - TEL
+      - QA
+
+    NotificationChannel:
+      type: string
+      enum:
+      - email
+      - sms
+      - whatsapp
+
+    ##################################
+    # DOCUMENTS (Mongo)
+    ##################################
+
+    EventDocument:
+      type: object
+      properties:
+        id:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        title:
+          type: string
+        description:
+          type: string
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupEnum'
+      required: [category, title]
+
+    EventCreateRequest:
+      type: object
+      properties:
+        category:
+          $ref: '#/components/schemas/Category'
+        title:
+          type: string
+        description:
+          type: string
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupEnum'
+      required: [category, title]
+
+    TaskDocument:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        deadline:
+          type: string
+          format: date-time
+        event:
+          $ref: '#/components/schemas/EventDocument'
+        status:
+          type: string
+          enum: [NEW, DONE, REJECTED]
+        actionUrl:
+          type: string
+        employeeId:
+          type: string
+
+    EmployeeDocument:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        categoriesBlacklist:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupEnum'
+        position:
+          type: string
+        notificationChannels:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationChannel'
