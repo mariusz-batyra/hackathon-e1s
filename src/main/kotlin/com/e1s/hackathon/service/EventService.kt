@@ -14,6 +14,10 @@ class EventService(
     private val employeeRepository: EmployeeRepository,
     private val taskRepository: TaskRepository
 ) {
+    fun getAllEvents(): List<EventDocument> {
+        return eventRepository.findAll()
+    }
+
     @Transactional
     fun createEvent(event: EventDocument): EventDocument {
         val saved = eventRepository.save(event)

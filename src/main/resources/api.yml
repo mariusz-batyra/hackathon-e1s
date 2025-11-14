@@ -13,6 +13,20 @@ paths:
   ##############################
 
   /events:
+    get:
+      summary: Get all events
+      tags: [Events]
+      description: Retrieve all events from the system
+      responses:
+        '200':
+          description: List of all events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventDto'
+
     post:
       summary: Create new event
       tags: [Events]
