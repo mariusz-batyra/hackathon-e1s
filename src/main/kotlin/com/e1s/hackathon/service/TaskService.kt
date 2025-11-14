@@ -4,6 +4,7 @@ import com.e1s.hackathon.model.TaskDocument
 import com.e1s.hackathon.model.TaskStatus
 import com.e1s.hackathon.repository.TaskRepository
 import org.springframework.stereotype.Service
+import java.time.Instant
 
 @Service
 class TaskService(private val taskRepository: TaskRepository) {
@@ -17,7 +18,7 @@ class TaskService(private val taskRepository: TaskRepository) {
 
     private fun updateStatus(taskId: String, status: TaskStatus) {
         val task = taskRepository.findById(taskId).orElseThrow { IllegalArgumentException("Task not found: $taskId") }
-        taskRepository.save(task.copy(status = status))
+        val updated = if (status == TaskStatus.DONE) task.copy(status = status, doneAt = Instant.now()) else task.copy(status = status)
+        taskRepository.save(updated)
     }
 }
-

@@ -1,0 +1,60 @@
+### Base URL variable
+@baseUrl = http://localhost:8080/api
+@employeeId = <paste-employee-id>
+@taskId = <paste-task-id>
+
+### Events
+POST {{baseUrl}}/events
+Content-Type: application/json
+
+{
+  "category": "SECURITY",
+  "title": "Security Drill",
+  "description": "Quarterly security drill",
+  "groups": ["DEV", "QA"]
+}
+
+### Tasks for a user
+# Provide X-User-Id header with an existing employee ID from seed output.
+GET {{baseUrl}}/tasks
+X-User-Id: {{employeeId}}
+
+### mark task as done
+POST {{baseUrl}}/tasks/{{taskId}}/done
+
+### mark task as rejected
+POST {{baseUrl}}/tasks/{{taskId}}/reject
+
+### User Settings - Category Blacklist
+GET {{baseUrl}}/users/me/categories/blacklist
+X-User-Id: {{employeeId}}
+
+### Update Category Blacklist
+PUT {{baseUrl}}/users/me/categories/blacklist
+X-User-Id: {{employeeId}}
+Content-Type: application/json
+
+[
+  "GENERAL",
+  "SALES"
+]
+
+### User Settings - Notification Channels
+GET {{baseUrl}}/users/me/notification-channels
+X-User-Id: {{employeeId}}
+
+### Update Notification Channels
+PUT {{baseUrl}}/users/me/notification-channels
+X-User-Id: {{employeeId}}
+Content-Type: application/json
+
+[
+  "EMAIL",
+  "SMS"
+]
+
+### Statistics
+GET {{baseUrl}}/stats
+
+### Statistics with custom expiring window (12h)
+GET {{baseUrl}}/stats?expiringHours=12

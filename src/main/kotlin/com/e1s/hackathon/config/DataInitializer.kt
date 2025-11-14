@@ -95,5 +95,6 @@ class DataInitializer {
         println("Seed completed: employees=${employees.count()}, events=${eventRepository.count()}, tasks=$taskCount")
         println("Example event id: ${savedEvent.id}")
         println("Example employee id (Anna): ${employees.first().id}")
+        println("Example task id: " + taskRepository.findByEmployeeId(employees.first().id!!))
     }
 }

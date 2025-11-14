@@ -13,6 +13,13 @@ data class TaskDocument(
     val event: EventDocument,
     val status: TaskStatus = TaskStatus.NEW,
     val actionUrl: String? = null,
-    val employeeId: String
+    val employeeId: String,
+    // Liczba wysłanych powiadomień powiązanych z tym zadaniem (sumarycznie różnymi kanałami)
+    val deliveredNotifications: Int = 0,
+    // Liczba unikalnych kliknięć w link akcji (np. śledzone parametrem)
+    val uniqueClicks: Int = 0,
+    // Moment oznaczenia jako DONE (do wyliczenia średniego czasu realizacji)
+    val doneAt: Instant? = null,
+    // Snapshot wybranego kanału w momencie pierwszej wysyłki (upraszcza analizę skuteczności)
+    val primaryChannel: NotificationChannel? = null
 )
-
