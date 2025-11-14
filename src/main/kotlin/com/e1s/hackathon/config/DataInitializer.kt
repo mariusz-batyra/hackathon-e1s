@@ -35,7 +35,8 @@ class DataInitializer {
                     lastName = "Bogucka",
                     groups = listOf(GroupEnum.B2B, GroupEnum.QA),
                     position = "QA Engineer",
-                    notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.SMS)
+                    notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.SMS),
+                    categoriesBlacklist = listOf(Category.PARTY)
                 ),
                 EmployeeDocument(
                     firstName = "Eryk",
