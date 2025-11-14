@@ -9,6 +9,7 @@ enum class CategoryDto {
     GENERAL,
     ONBOARDING,
     TRAINING,
+    PARTY,
     HR,
     IT,
     COMPLIANCE
