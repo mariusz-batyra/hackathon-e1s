@@ -1,84 +1,103 @@
 package com.e1s.hackathon.config
 
-import com.e1s.hackathon.model.Product
-import com.e1s.hackathon.repository.ProductRepository
+import com.e1s.hackathon.model.Category
+import com.e1s.hackathon.model.EmployeeDocument
+import com.e1s.hackathon.model.EventDocument
+import com.e1s.hackathon.model.GroupEnum
+import com.e1s.hackathon.model.NotificationChannel
+import com.e1s.hackathon.model.NotificationPolicy
+import com.e1s.hackathon.repository.EmployeeRepository
+import com.e1s.hackathon.repository.EventRepository
+import com.e1s.hackathon.repository.TaskRepository
+import com.e1s.hackathon.service.EventService
 import org.springframework.boot.CommandLineRunner
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(prefix = "spring.data.mongodb", name = ["host"])
 class DataInitializer {
 
     @Bean
-    fun initDatabase(productRepository: ProductRepository) = CommandLineRunner {
-        // Clear existing data (optional - remove in production)
-        productRepository.deleteAll()
+    fun initDatabase(
+        employeeRepository: EmployeeRepository,
+        eventRepository: EventRepository,
+        taskRepository: TaskRepository,
+        eventService: EventService
+    ) = CommandLineRunner {
+        employeeRepository.deleteAll()
+        eventRepository.deleteAll()
+        taskRepository.deleteAll()
 
-        // Initialize with sample products
-        val products = listOf(
-            Product(
-                name = "Laptop",
-                description = "High-performance laptop for developers",
-                price = 1299.99,
-                category = "Electronics",
-                inStock = true
-            ),
-            Product(
-                name = "Wireless Mouse",
-                description = "Ergonomic wireless mouse",
-                price = 29.99,
-                category = "Electronics",
-                inStock = true
-            ),
-            Product(
-                name = "Standing Desk",
-                description = "Adjustable height standing desk",
-                price = 599.99,
-                category = "Furniture",
-                inStock = true
-            ),
-            Product(
-                name = "Mechanical Keyboard",
-                description = "RGB mechanical keyboard with blue switches",
-                price = 149.99,
-                category = "Electronics",
-                inStock = true
-            ),
-            Product(
-                name = "Office Chair",
-                description = "Ergonomic office chair with lumbar support",
-                price = 399.99,
-                category = "Furniture",
-                inStock = false
-            ),
-            Product(
-                name = "USB-C Hub",
-                description = "7-in-1 USB-C hub adapter",
-                price = 49.99,
-                category = "Electronics",
-                inStock = true
-            ),
-            Product(
-                name = "Monitor",
-                description = "27-inch 4K monitor",
-                price = 449.99,
-                category = "Electronics",
-                inStock = true
-            ),
-            Product(
-                name = "Desk Lamp",
-                description = "LED desk lamp with adjustable brightness",
-                price = 39.99,
-                category = "Furniture",
-                inStock = true
+        // Pracownicy demo
+        val employees = employeeRepository.saveAll(
+            listOf(
+                EmployeeDocument(
+                    firstName = "Anna",
+                    lastName = "Dev",
+                    groups = listOf(GroupEnum.DEV, GroupEnum.QA),
+                    position = "Senior Developer",
+                    notificationChannels = listOf(NotificationChannel.email, NotificationChannel.sms)
+                ),
+                EmployeeDocument(
+                    firstName = "Bartek",
+                    lastName = "QA",
+                    groups = listOf(GroupEnum.QA),
+                    position = "QA Engineer",
+                    notificationChannels = listOf(NotificationChannel.email)
+                ),
+                EmployeeDocument(
+                    firstName = "Celina",
+                    lastName = "Sales",
+                    groups = listOf(GroupEnum.sales),
+                    position = "Sales Specialist",
+                    notificationChannels = listOf(NotificationChannel.email, NotificationChannel.whatsapp)
+                ),
+                EmployeeDocument(
+                    firstName = "Darek",
+                    lastName = "Back",
+                    groups = listOf(GroupEnum.backoffice),
+                    position = "Backoffice Admin",
+                    notificationChannels = listOf(NotificationChannel.email)
+                )
             )
         )
 
-        productRepository.saveAll(products)
+        // Wydarzenie demo które wygeneruje Taski dla DEV i QA (Anna, Bartek)
+        val securityCategory = Category(name = "SEC", required = true, notificationPolicy = NotificationPolicy.STRICT)
+        val onboardingEvent = EventDocument(
+            category = securityCategory,
+            title = "Quarterly Security Training",
+            description = "Obowiązkowe szkolenie bezpieczeństwa dla zespołów DEV i QA",
+            groups = listOf(GroupEnum.DEV, GroupEnum.QA)
+        )
+        val savedEvent = eventService.createEvent(onboardingEvent)
 
-        println("Database initialized with ${products.size} products")
+        // Drugie wydarzenie skierowane do Sales (Celina)
+        val salesCategory = Category(name = "SALES-INFO", required = false, notificationPolicy = NotificationPolicy.MEDIUM)
+        eventService.createEvent(
+            EventDocument(
+                category = salesCategory,
+                title = "New Product Launch Brief",
+                description = "Informacja o nowym produkcie dla działu sprzedaży",
+                groups = listOf(GroupEnum.sales)
+            )
+        )
+
+        // Trzecie wydarzenie bez grup (wszyscy poza blacklist) – Backoffice dostanie zadanie
+        val generalCategory = Category(name = "GENERAL", required = false, notificationPolicy = NotificationPolicy.RELAXED)
+        eventService.createEvent(
+            EventDocument(
+                category = generalCategory,
+                title = "Company All Hands",
+                description = "Spotkanie całej firmy",
+                groups = emptyList()
+            )
+        )
+
+        val taskCount = taskRepository.count()
+
+        println("Seed completed: employees=${employees.count()}, events=${eventRepository.count()}, tasks=$taskCount")
+        println("Example event id: ${savedEvent.id}")
+        println("Example employee id (Anna): ${employees.first().id}")
     }
 }
-
