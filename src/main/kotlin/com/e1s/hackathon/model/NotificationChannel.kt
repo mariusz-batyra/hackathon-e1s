@@ -3,5 +3,5 @@ package com.e1s.hackathon.model
 /**
  * User notification channels.
  */
-enum class NotificationChannel { email, sms, whatsapp }
+enum class NotificationChannel { EMAIL, SMS, WHATSAPP }
 

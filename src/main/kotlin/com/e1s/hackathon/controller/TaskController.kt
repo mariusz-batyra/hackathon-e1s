@@ -1,6 +1,7 @@
 package com.e1s.hackathon.controller
 
-import com.e1s.hackathon.model.TaskDocument
+import com.e1s.hackathon.controller.dto.TaskDto
+import com.e1s.hackathon.controller.dto.toDto
 import com.e1s.hackathon.service.TaskService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController
 class TaskController(private val taskService: TaskService) {
 
     @GetMapping
-    fun getTasksForCurrentUser(@RequestHeader("X-User-Id") userId: String): ResponseEntity<List<TaskDocument>> {
+    fun getTasksForCurrentUser(@RequestHeader("X-User-Id") userId: String): ResponseEntity<List<TaskDto>> {
         val tasks = taskService.getTasksForUser(userId)
-        return ResponseEntity.ok(tasks)
+        return ResponseEntity.ok(tasks.map { it.toDto() })
     }
 
     @PostMapping("/{taskId}/done")

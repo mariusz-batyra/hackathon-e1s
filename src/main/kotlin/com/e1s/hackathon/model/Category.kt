@@ -1,18 +1,20 @@
 package com.e1s.hackathon.model
 
-import com.fasterxml.jackson.annotation.JsonInclude
-
 /**
- * Represents a task/event category with an optional notification policy and required flag.
+ * Represents a task/event category with required flag and notification policy.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-data class Category(
-    val name: String,
-    val required: Boolean? = null,
-    val notificationPolicy: NotificationPolicy? = null
+enum class Category(
+    val required: Boolean,
+    val notificationPolicy: NotificationPolicy
 ) {
-    init {
-        require(name.isNotBlank()) { "Category name must not be blank" }
-    }
+    SECURITY(required = true, notificationPolicy = NotificationPolicy.STRICT),
+    SALES(required = false, notificationPolicy = NotificationPolicy.MEDIUM),
+    GENERAL(required = false, notificationPolicy = NotificationPolicy.RELAXED),
+    ONBOARDING(required = true, notificationPolicy = NotificationPolicy.STRICT),
+    TRAINING(required = false, notificationPolicy = NotificationPolicy.MEDIUM),
+    HR(required = false, notificationPolicy = NotificationPolicy.MEDIUM),
+    IT(required = true, notificationPolicy = NotificationPolicy.STRICT),
+    COMPLIANCE(required = true, notificationPolicy = NotificationPolicy.STRICT)
 }
+
 

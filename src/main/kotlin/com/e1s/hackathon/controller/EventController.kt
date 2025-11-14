@@ -1,6 +1,9 @@
 package com.e1s.hackathon.controller
 
 import com.e1s.hackathon.controller.dto.EventCreateRequest
+import com.e1s.hackathon.controller.dto.EventDto
+import com.e1s.hackathon.controller.dto.toDto
+import com.e1s.hackathon.controller.dto.toModel
 import com.e1s.hackathon.model.EventDocument
 import com.e1s.hackathon.service.EventService
 import org.springframework.http.HttpStatus
@@ -15,16 +18,15 @@ import org.springframework.web.bind.annotation.RestController
 class EventController(private val eventService: EventService) {
 
     @PostMapping
-    fun createEvent(@RequestBody request: EventCreateRequest): ResponseEntity<EventDocument> {
-        val saved = eventService.createEvent(
-            EventDocument(
-                category = request.category,
-                title = request.title,
-                description = request.description,
-                groups = request.groups
-            )
+    fun createEvent(@RequestBody request: EventCreateRequest): ResponseEntity<EventDto> {
+        val eventDocument = EventDocument(
+            category = request.category.toModel(),
+            title = request.title,
+            description = request.description,
+            groups = request.groups
         )
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved)
+        val saved = eventService.createEvent(eventDocument)
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved.toDto())
     }
 }
 

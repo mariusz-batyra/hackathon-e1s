@@ -20,7 +20,7 @@ class EventService(
         // Generate tasks for employees belonging to targeted groups and not blacklisting category
         val employees = employeeRepository.findAll().filter { emp ->
             (event.groups.isEmpty() || emp.groups.any { event.groups.contains(it) }) &&
-                emp.categoriesBlacklist.none { it.name == event.category.name }
+                emp.categoriesBlacklist.none { it == event.category }
         }
         val tasks = employees.map { employee ->
             TaskDocument(
