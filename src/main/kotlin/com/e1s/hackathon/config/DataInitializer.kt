@@ -31,32 +31,39 @@ class DataInitializer {
         val employees = employeeRepository.saveAll(
             listOf(
                 EmployeeDocument(
-                    firstName = "Anna",
-                    lastName = "Dev",
-                    groups = listOf(GroupEnum.DEV, GroupEnum.QA),
-                    position = "Senior Developer",
+                    firstName = "Adelajda",
+                    lastName = "Bogucka",
+                    groups = listOf(GroupEnum.B2B, GroupEnum.QA),
+                    position = "QA Engineer",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.SMS)
                 ),
                 EmployeeDocument(
-                    firstName = "Bartek",
-                    lastName = "QA",
-                    groups = listOf(GroupEnum.QA),
-                    position = "QA Engineer",
+                    firstName = "Eryk",
+                    lastName = "Machak",
+                    groups = listOf(GroupEnum.DEV, GroupEnum.UoP),
+                    position = "Senior Developer",
                     notificationChannels = listOf(NotificationChannel.EMAIL)
                 ),
                 EmployeeDocument(
-                    firstName = "Celina",
-                    lastName = "Sales",
-                    groups = listOf(GroupEnum.SALES),
-                    position = "Sales Specialist",
+                    firstName = "Ludwika",
+                    lastName = "Gibas",
+                    groups = listOf(GroupEnum.DEV),
+                    position = "Junior Developer",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.WHATSAPP)
                 ),
                 EmployeeDocument(
-                    firstName = "Darek",
-                    lastName = "Back",
+                    firstName = "Mateusz",
+                    lastName = "Drzyzga",
                     groups = listOf(GroupEnum.BACKOFFICE),
                     position = "Backoffice Admin",
                     notificationChannels = listOf(NotificationChannel.EMAIL)
+                ),
+                EmployeeDocument(
+                    firstName = "Wincenty",
+                    lastName = "Kohut",
+                    groups = listOf(GroupEnum.BACKOFFICE),
+                    position = "Office assistant",
+                    notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.MS_TEAMS)
                 )
             )
         )
@@ -70,13 +77,12 @@ class DataInitializer {
         )
         val savedEvent = eventService.createEvent(onboardingEvent)
 
-        // Drugie wydarzenie skierowane do Sales (Celina)
         eventService.createEvent(
             EventDocument(
-                category = Category.SALES,
-                title = "New Product Launch Brief",
-                description = "Informacja o nowym produkcie dla działu sprzedaży",
-                groups = listOf(GroupEnum.SALES)
+                category = Category.PARTY,
+                title = "Friday Beer",
+                description = "Piwny piątku w biurze lubelskim o 16:00",
+                groups = listOf(GroupEnum.UoP, GroupEnum.B2B)
             )
         )
 
@@ -84,7 +90,7 @@ class DataInitializer {
         eventService.createEvent(
             EventDocument(
                 category = Category.GENERAL,
-                title = "Company All Hands",
+                title = "Town Hall Meeting",
                 description = "Spotkanie całej firmy",
                 groups = emptyList()
             )
@@ -93,8 +99,8 @@ class DataInitializer {
         val taskCount = taskRepository.count()
 
         println("Seed completed: employees=${employees.count()}, events=${eventRepository.count()}, tasks=$taskCount")
-        println("Example event id: ${savedEvent.id}")
-        println("Example employee id (Anna): ${employees.first().id}")
-        println("Example task id: " + taskRepository.findByEmployeeId(employees.first().id!!))
+        println("Events:\n" + eventRepository.findAll().map { "${it.id} ${it.title}\n" })
+        println("Employees:\n" + employeeRepository.findAll().map { "${it.id} ${it.firstName} ${it.lastName}\n" })
+        println("Tasks:\n" + taskRepository.findAll().map { "${it.id} for Employee ${it.employeeId} from Event ${it.event.id}\n" })
     }
 }

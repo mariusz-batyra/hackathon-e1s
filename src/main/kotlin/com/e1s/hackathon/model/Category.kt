@@ -10,6 +10,7 @@ enum class Category(
     SECURITY(required = true, notificationPolicy = NotificationPolicy.STRICT),
     SALES(required = false, notificationPolicy = NotificationPolicy.MEDIUM),
     GENERAL(required = false, notificationPolicy = NotificationPolicy.RELAXED),
+    PARTY(required = false, notificationPolicy = NotificationPolicy.RELAXED),
     ONBOARDING(required = true, notificationPolicy = NotificationPolicy.STRICT),
     TRAINING(required = false, notificationPolicy = NotificationPolicy.MEDIUM),
     HR(required = false, notificationPolicy = NotificationPolicy.MEDIUM),
