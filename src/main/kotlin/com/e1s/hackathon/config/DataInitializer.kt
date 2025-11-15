@@ -31,6 +31,15 @@ class DataInitializer {
         val employees = employeeRepository.saveAll(
             listOf(
                 EmployeeDocument(
+                    firstName = "Mikołaj",
+                    lastName = "Cekut",
+                    email = "mikolaj.cekut@edge1s.com",
+                    groups = listOf(GroupEnum.B2B, GroupEnum.DEV),
+                    position = "Senior Engineer",
+                    notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.SMS),
+                    categoriesBlacklist = listOf(Category.PARTY)
+                ),
+                EmployeeDocument(
                     firstName = "Adelajda",
                     lastName = "Bogucka",
                     email = "contrabandalbn@gmail.com",
@@ -78,7 +87,7 @@ class DataInitializer {
         eventService.createEvent(
             EventDocument(
                 category = Category.SECURITY,
-                title = "Quarterly Security Training",
+                title = "Szkolenie bezpieczeństwa",
                 description = "Obowiązkowe szkolenie bezpieczeństwa dla zespołów DEV i QA",
                 groups = listOf(GroupEnum.DEV, GroupEnum.QA)
             )
@@ -93,12 +102,47 @@ class DataInitializer {
             )
         )
 
-        // Trzecie wydarzenie bez grup (wszyscy poza blacklist) – Backoffice dostanie zadanie
+        eventService.createEvent(
+            EventDocument(
+                category = Category.PARTY,
+                title = "Śniadanie w biurze",
+                description = "Zapraszamy na wspólne śniadanie w biurze w czwartek o 9:00.",
+                groups = listOf(GroupEnum.UoP, GroupEnum.B2B)
+            )
+        )
+
         eventService.createEvent(
             EventDocument(
                 category = Category.GENERAL,
                 title = "Town Hall Meeting",
                 description = "Spotkanie całej firmy",
+                groups = emptyList()
+            )
+        )
+
+        eventService.createEvent(
+            EventDocument(
+                category = Category.GENERAL,
+                title = "Przypomnienie o fakturze",
+                description = "Przypominamy o konieczności przesłania faktury za usługi informatyczne.",
+                groups = emptyList()
+            )
+        )
+
+        eventService.createEvent(
+            EventDocument(
+                category = Category.GENERAL,
+                title = "Zapisy na spotkanie świąteczne",
+                description = "Zapisy na firmowe spotkanie świąteczne już trwają! Zarezerwuj swoje miejsce już dziś.",
+                groups = emptyList()
+            )
+        )
+
+        eventService.createEvent(
+            EventDocument(
+                category = Category.GENERAL,
+                title = "Zapisy na siatkówkę",
+                description = "Zapisy na siatkówkę w każdą środę o 20:00 na Akademos Lublin. Dołącz do drużyny!",
                 groups = emptyList()
             )
         )
