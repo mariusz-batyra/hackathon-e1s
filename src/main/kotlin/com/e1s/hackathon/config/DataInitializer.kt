@@ -42,7 +42,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Adelajda",
                     lastName = "Bogucka",
-                    email = "contrabandalbn@gmail.com",
+//                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.B2B, GroupEnum.QA),
                     position = "QA Engineer",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.SMS),
@@ -51,7 +51,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Eryk",
                     lastName = "Machak",
-                    email = "contrabandalbn@gmail.com",
+//                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.DEV, GroupEnum.UoP),
                     position = "Senior Developer",
                     notificationChannels = listOf(NotificationChannel.EMAIL)
@@ -59,7 +59,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Ludwika",
                     lastName = "Gibas",
-                    email = "contrabandalbn@gmail.com",
+//                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.DEV),
                     position = "Junior Developer",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.WHATSAPP)
@@ -67,7 +67,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Mateusz",
                     lastName = "Drzyzga",
-                    email = "contrabandalbn@gmail.com",
+//                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.BACKOFFICE),
                     position = "Backoffice Admin",
                     notificationChannels = listOf(NotificationChannel.EMAIL)
@@ -75,7 +75,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Wincenty",
                     lastName = "Kohut",
-                    email = "contrabandalbn@gmail.com",
+//                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.BACKOFFICE),
                     position = "Office assistant",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.MS_TEAMS)
@@ -87,8 +87,8 @@ class DataInitializer {
         eventService.createEvent(
             EventDocument(
                 category = Category.SECURITY,
-                title = "Szkolenie bezpieczeństwa",
-                description = "Obowiązkowe szkolenie bezpieczeństwa dla zespołów DEV i QA",
+                title = "Szkolenie bezpieczenstwa",
+                description = "Obowiazkowe szkolenie bezpieczenstwa dla zespołow DEV i QA",
                 groups = listOf(GroupEnum.DEV, GroupEnum.QA)
             )
         )
@@ -97,7 +97,7 @@ class DataInitializer {
             EventDocument(
                 category = Category.PARTY,
                 title = "Friday Beer",
-                description = "Piwny piątku w biurze lubelskim o 16:00",
+                description = "Piwny piatku w biurze lubelskim o 16:00",
                 groups = listOf(GroupEnum.UoP, GroupEnum.B2B)
             )
         )
@@ -105,8 +105,8 @@ class DataInitializer {
         eventService.createEvent(
             EventDocument(
                 category = Category.PARTY,
-                title = "Śniadanie w biurze",
-                description = "Zapraszamy na wspólne śniadanie w biurze w czwartek o 9:00.",
+                title = "Sniadanie w biurze",
+                description = "Zapraszamy na wspolne sniadanie w biurze w czwartek o 9:00.",
                 groups = listOf(GroupEnum.UoP, GroupEnum.B2B)
             )
         )
@@ -115,7 +115,7 @@ class DataInitializer {
             EventDocument(
                 category = Category.GENERAL,
                 title = "Town Hall Meeting",
-                description = "Spotkanie całej firmy",
+                description = "Spotkanie calej firmy",
                 groups = emptyList()
             )
         )
@@ -124,7 +124,7 @@ class DataInitializer {
             EventDocument(
                 category = Category.GENERAL,
                 title = "Przypomnienie o fakturze",
-                description = "Przypominamy o konieczności przesłania faktury za usługi informatyczne.",
+                description = "Przypominamy o koniecznosci przeslania faktury za uslugi informatyczne.",
                 groups = emptyList()
             )
         )
@@ -132,8 +132,8 @@ class DataInitializer {
         eventService.createEvent(
             EventDocument(
                 category = Category.GENERAL,
-                title = "Zapisy na spotkanie świąteczne",
-                description = "Zapisy na firmowe spotkanie świąteczne już trwają! Zarezerwuj swoje miejsce już dziś.",
+                title = "Zapisy na spotkanie Swiąteczne",
+                description = "Zapisy na firmowe spotkanie swiąteczne juz trwaja! Zarezerwuj swoje miejsce juz dzis.",
                 groups = emptyList()
             )
         )
@@ -141,8 +141,8 @@ class DataInitializer {
         eventService.createEvent(
             EventDocument(
                 category = Category.GENERAL,
-                title = "Zapisy na siatkówkę",
-                description = "Zapisy na siatkówkę w każdą środę o 20:00 na Akademos Lublin. Dołącz do drużyny!",
+                title = "Zapisy na siatkowke",
+                description = "Zapisy na siatkowke w każdą środę o 20:00 na Akademos Lublin. Dołącz do drużyny!",
                 groups = emptyList()
             )
         )
