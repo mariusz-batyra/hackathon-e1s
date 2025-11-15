@@ -28,25 +28,33 @@ class StatisticsService(
         val totalUniqueClicks: Long,
         val averageCompletionHours: Double?,
         val channelEffectiveness: List<ChannelEffectiveness>,
-        val channelPreferences: List<ChannelPreferenceSlice>
+        val channelPreferences: List<ChannelPreferenceSlice>,
+        // NOWE POLA
+        val activeTasksCount: Long,              // liczba zadań w statusie NEW
+        val overdueTasksCount: Long,             // liczba zadań w statusie NEW z przekroczonym deadline
+        val completionPercentage: Double,        // (DONE + REJECTED) / total * 100
+        val activeEmployeesCount: Long           // liczba pracowników w bazie
     )
 
     fun getStats(expiringSoonThresholdHours: Long = 24): StatsResponse {
         val tasks = taskRepository.findAll()
+        val employees = employeeRepository.findAll()
         if (tasks.isEmpty()) {
-            return emptyStats()
+            return emptyStats(employees.size.toLong())
         }
+        val now = Instant.now()
         val total = tasks.size.toLong()
         val doneTasks = tasks.count { it.status == TaskStatus.DONE }.toLong()
         val rejectedTasks = tasks.count { it.status == TaskStatus.REJECTED }.toLong()
         val pendingTasks = tasks.count { it.status == TaskStatus.NEW }.toLong()
-        val now = Instant.now()
-        val expiringSoon = tasks.count { it.status == TaskStatus.NEW && it.deadline != null && Duration.between(now, it.deadline).toHours() in 0..expiringSoonThresholdHours }.toLong()
+        val overdueTasks = tasks.count { it.status == TaskStatus.NEW && it.deadline != null && it.deadline.isBefore(now) }.toLong()
+        val expiringSoon = tasks.count { it.status == TaskStatus.NEW && it.deadline != null && !it.deadline.isBefore(now) && Duration.between(now, it.deadline).toHours() in 0..expiringSoonThresholdHours }.toLong()
 
         val overallDonePct = pct(doneTasks, total)
         val overallRejectedPct = pct(rejectedTasks, total)
         val pendingPct = pct(pendingTasks, total)
         val expiringPct = pct(expiringSoon, total)
+        val completionPct = pct(doneTasks + rejectedTasks, total)
 
         val categoryRates = tasks.groupBy { it.event.category }.map { (cat, catTasks) ->
             val catTotal = catTasks.size.toLong()
@@ -75,7 +83,6 @@ class StatisticsService(
             }
             .sortedByDescending { it.completionRate }
 
-        val employees = employeeRepository.findAll()
         val channelPreferences = NotificationChannel.values().map { ch ->
             val count = employees.count { it.notificationChannels.contains(ch) }.toLong()
             ChannelPreferenceSlice(ch, pct(count, employees.size.toLong()), count)
@@ -92,13 +99,17 @@ class StatisticsService(
             totalUniqueClicks = totalClicks,
             averageCompletionHours = avgHours,
             channelEffectiveness = channelEffectiveness,
-            channelPreferences = channelPreferences
+            channelPreferences = channelPreferences,
+            activeTasksCount = pendingTasks,
+            overdueTasksCount = overdueTasks,
+            completionPercentage = completionPct,
+            activeEmployeesCount = employees.size.toLong()
         )
     }
 
     private fun pct(part: Long, total: Long): Double = if (total == 0L) 0.0 else (part.toDouble() / total.toDouble()) * 100.0
 
-    private fun emptyStats() = StatsResponse(
+    private fun emptyStats(employeeCount: Long) = StatsResponse(
         overallDonePercentage = 0.0,
         overallRejectedPercentage = 0.0,
         pendingPercentage = 0.0,
@@ -109,6 +120,10 @@ class StatisticsService(
         totalUniqueClicks = 0,
         averageCompletionHours = null,
         channelEffectiveness = emptyList(),
-        channelPreferences = emptyList()
+        channelPreferences = emptyList(),
+        activeTasksCount = 0,
+        overdueTasksCount = 0,
+        completionPercentage = 0.0,
+        activeEmployeesCount = employeeCount
     )
 }

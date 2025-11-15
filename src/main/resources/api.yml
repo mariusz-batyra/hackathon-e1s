@@ -306,6 +306,10 @@ paths:
                       - channel: MS_TEAMS
                         percentage: 15.0
                         employees: 75
+                    activeTasksCount: 130
+                    overdueTasksCount: 15
+                    completionPercentage: 67.5
+                    activeEmployeesCount: 500
         '400':
           description: Nieprawidłowy parametr expiringHours (poza zakresem)
         '500':
@@ -510,6 +514,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ChannelPreferenceSlice'
+        activeTasksCount:
+          type: integer
+          format: int64
+          description: Liczba aktywnych zadań (status NEW)
+        overdueTasksCount:
+          type: integer
+          format: int64
+          description: Liczba zaległych zadań (status NEW po deadline)
+        completionPercentage:
+          type: number
+          format: double
+          description: (DONE + REJECTED) / total * 100
+        activeEmployeesCount:
+          type: integer
+          format: int64
+          description: Aktualna liczba pracowników w bazie
 
     CategoryCompletionRate:
       type: object
