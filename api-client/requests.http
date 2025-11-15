@@ -1,7 +1,8 @@
 ### Base URL variable
 @baseUrl = http://localhost:8080/api
-@employeeId = <paste-employee-id>
+@employeeId = <paste-task-id>
 @taskId = <paste-task-id>
+@eventId = <paste-task-id>
 
 ### Events
 POST {{baseUrl}}/events
@@ -13,6 +14,9 @@ Content-Type: application/json
   "description": "Quarterly security drill",
   "groups": ["DEV", "QA"]
 }
+
+### get taks for event
+GET {{baseUrl}}/events/{{eventId}}/participants-status
 
 ### Tasks for a user
 # Provide X-User-Id header with an existing employee ID from seed output.

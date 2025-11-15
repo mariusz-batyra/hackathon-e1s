@@ -45,6 +45,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/EventDto'
 
+  /events/{eventId}/participants-status:
+    get:
+      summary: Get tasks for an event grouped by status
+      tags: [Events]
+      description: Returns three lists of tasks for the event: pending (NEW), done (DONE), rejected (REJECTED).
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: Unique identifier of the event
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Grouped tasks by status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventTasksStatusDto'
+        '404':
+          description: Event not found
+
   ##############################
   # USER TASKS
   ##############################
@@ -354,6 +376,31 @@ components:
           items:
             $ref: '#/components/schemas/NotificationChannel'
 
+    ParticipantTaskDto:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum: [NEW, DONE, REJECTED]
+        event:
+          $ref: '#/components/schemas/EventDto'
+        actionUrl:
+          type: string
+          nullable: true
+        employeeFirstName:
+          type: string
+        employeeLastName:
+          type: string
 
     ##################################
     # STATISTICS SCHEMAS
@@ -446,4 +493,19 @@ components:
           type: integer
           format: int64
 
-
+    EventTasksStatusDto:
+      type: object
+      description: Tasks for an event grouped by status (pending=NEW, done=DONE, rejected=REJECTED) with employee names.
+      properties:
+        pending:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantTaskDto'
+        done:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantTaskDto'
+        rejected:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantTaskDto'

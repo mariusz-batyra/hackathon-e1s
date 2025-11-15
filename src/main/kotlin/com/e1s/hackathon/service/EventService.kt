@@ -2,6 +2,7 @@ package com.e1s.hackathon.service
 
 import com.e1s.hackathon.model.EventDocument
 import com.e1s.hackathon.model.TaskDocument
+import com.e1s.hackathon.model.TaskStatus
 import com.e1s.hackathon.repository.EmployeeRepository
 import com.e1s.hackathon.repository.EventRepository
 import com.e1s.hackathon.repository.TaskRepository
@@ -17,6 +18,8 @@ class EventService(
     fun getAllEvents(): List<EventDocument> {
         return eventRepository.findAll()
     }
+
+    fun getEventTasks(eventId: String): List<TaskDocument> = taskRepository.findByEventId(eventId)
 
     @Transactional
     fun createEvent(event: EventDocument): EventDocument {
@@ -35,5 +38,7 @@ class EventService(
         if (tasks.isNotEmpty()) taskRepository.saveAll(tasks)
         return saved
     }
-}
 
+    fun getEmployeesMap(): Map<String, com.e1s.hackathon.model.EmployeeDocument> =
+        employeeRepository.findAll().associateBy { it.id!! }
+}

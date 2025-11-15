@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 interface TaskRepository : MongoRepository<TaskDocument, String> {
     fun findByEmployeeId(employeeId: String): List<TaskDocument>
     fun findByEmployeeIdAndStatus(employeeId: String, status: TaskStatus): List<TaskDocument>
+    fun findByEventId(eventId: String): List<TaskDocument>
 }
