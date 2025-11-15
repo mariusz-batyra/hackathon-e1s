@@ -2,6 +2,7 @@ package com.e1s.hackathon.service
 
 import com.e1s.hackathon.email.EmailFacade
 import com.e1s.hackathon.model.EventDocument
+import com.e1s.hackathon.model.NotificationChannel
 import com.e1s.hackathon.model.TaskDocument
 import com.e1s.hackathon.repository.EmployeeRepository
 import com.e1s.hackathon.repository.EventRepository
@@ -41,29 +42,32 @@ class EventService(
 
             // Send email notification to each employee
             employees.forEach { employee ->
-                employee.email?.let { email ->
-                    try {
-                        emailFacade.sendNotification(
-                            to = email,
-                            subject = "New Task: ${saved.title}",
-                            text = """
-                                Hello ${employee.firstName} ${employee.lastName},
-                                
-                                You have been assigned a new task:
-                                
-                                Event: ${saved.title}
-                                Category: ${saved.category}
-                                Description: ${saved.description}
-                                
-                                Please review and complete this task at your earliest convenience.
-                                
-                                Best regards,
-                                Event Management System
-                            """.trimIndent()
-                        )
-                    } catch (e: Exception) {
-                        // Log error but don't fail the transaction
-                        println("Failed to send email to ${employee.email}: ${e.message}")
+                // Check if employee has EMAIL notification channel enabled
+                if (employee.notificationChannels.contains(NotificationChannel.EMAIL)) {
+                    employee.email?.let { email ->
+                        try {
+                            emailFacade.sendNotification(
+                                to = email,
+                                subject = "New Task: ${saved.title}",
+                                text = """
+                                    Hello ${employee.firstName} ${employee.lastName},
+                                    
+                                    You have been assigned a new task:
+                                    
+                                    Event: ${saved.title}
+                                    Category: ${saved.category}
+                                    Description: ${saved.description}
+                                    
+                                    Please review and complete this task at your earliest convenience.
+                                    
+                                    Best regards,
+                                    Event Management System
+                                """.trimIndent()
+                            )
+                        } catch (e: Exception) {
+                            // Log error but don't fail the transaction
+                            println("Failed to send email to ${employee.email}: ${e.message}")
+                        }
                     }
                 }
             }
