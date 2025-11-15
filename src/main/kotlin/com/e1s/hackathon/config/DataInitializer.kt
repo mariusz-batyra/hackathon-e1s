@@ -33,6 +33,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Adelajda",
                     lastName = "Bogucka",
+                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.B2B, GroupEnum.QA),
                     position = "QA Engineer",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.SMS),
@@ -41,6 +42,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Eryk",
                     lastName = "Machak",
+                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.DEV, GroupEnum.UoP),
                     position = "Senior Developer",
                     notificationChannels = listOf(NotificationChannel.EMAIL)
@@ -48,6 +50,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Ludwika",
                     lastName = "Gibas",
+                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.DEV),
                     position = "Junior Developer",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.WHATSAPP)
@@ -55,6 +58,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Mateusz",
                     lastName = "Drzyzga",
+                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.BACKOFFICE),
                     position = "Backoffice Admin",
                     notificationChannels = listOf(NotificationChannel.EMAIL)
@@ -62,6 +66,7 @@ class DataInitializer {
                 EmployeeDocument(
                     firstName = "Wincenty",
                     lastName = "Kohut",
+                    email = "contrabandalbn@gmail.com",
                     groups = listOf(GroupEnum.BACKOFFICE),
                     position = "Office assistant",
                     notificationChannels = listOf(NotificationChannel.EMAIL, NotificationChannel.MS_TEAMS)
@@ -70,13 +75,14 @@ class DataInitializer {
         )
 
         // Wydarzenie demo które wygeneruje Taski dla DEV i QA (Anna, Bartek)
-        val onboardingEvent = EventDocument(
-            category = Category.SECURITY,
-            title = "Quarterly Security Training",
-            description = "Obowiązkowe szkolenie bezpieczeństwa dla zespołów DEV i QA",
-            groups = listOf(GroupEnum.DEV, GroupEnum.QA)
+        eventService.createEvent(
+            EventDocument(
+                category = Category.SECURITY,
+                title = "Quarterly Security Training",
+                description = "Obowiązkowe szkolenie bezpieczeństwa dla zespołów DEV i QA",
+                groups = listOf(GroupEnum.DEV, GroupEnum.QA)
+            )
         )
-        val savedEvent = eventService.createEvent(onboardingEvent)
 
         eventService.createEvent(
             EventDocument(

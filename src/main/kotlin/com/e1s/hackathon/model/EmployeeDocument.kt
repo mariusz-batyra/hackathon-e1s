@@ -9,6 +9,7 @@ data class EmployeeDocument(
     val id: String? = null,
     val firstName: String,
     val lastName: String,
+    val email: String? = null,
     val categoriesBlacklist: List<Category> = emptyList(),
     val groups: List<GroupEnum> = emptyList(),
     val position: String? = null,
