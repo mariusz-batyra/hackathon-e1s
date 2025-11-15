@@ -230,23 +230,86 @@ paths:
     get:
       summary: Get system statistics
       tags: [Statistics]
+      description: |
+        Zwraca zagregowane statystyki zadań i aktywności użytkowników.
+        Pola:
+        - overallDonePercentage: % wszystkich zadań zakończonych (DONE)
+        - overallRejectedPercentage: % wszystkich zadań odrzuconych (REJECTED)
+        - pendingPercentage: % zadań oczekujących (NEW)
+        - expiringSoonPercentage: % zadań NEW z deadline w przedziale 0..expiringHours
+        - categoryRates: lista procentów wykonania / odrzucenia per kategoria
+        - alertEmployees: lista ID pracowników z zaległymi zadaniami (deadline < now, status NEW)
+        - totalDeliveredNotifications: suma wysłanych powiadomień (agregat z deliveredNotifications)
+        - totalUniqueClicks: suma unikalnych kliknięć w actionUrl
+        - averageCompletionHours: średni czas w godzinach od utworzenia do DONE
+        - channelEffectiveness: skuteczność kanałów (completionRate)
+        - channelPreferences: rozkład preferencji kanałów wśród pracowników
       parameters:
-      - name: expiringHours
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int64
-          default: 24
-        description: Threshold in hours for expiring tasks
+        - name: expiringHours
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 168
+            default: 24
+          description: Liczba godzin w przód używana do oznaczenia zadań jako "expiring soon" (domyślnie 24, max 7 dni = 168h).
       responses:
         '200':
-          description: Statistics data
+          description: Statystyki systemowe
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatsResponse'
-
+              examples:
+                sample:
+                  value:
+                    overallDonePercentage: 62.5
+                    overallRejectedPercentage: 5.0
+                    pendingPercentage: 32.5
+                    expiringSoonPercentage: 10.0
+                    categoryRates:
+                      - category: SECURITY
+                        donePercentage: 80.0
+                        rejectedPercentage: 5.0
+                        total: 40
+                        done: 32
+                        rejected: 2
+                      - category: GENERAL
+                        donePercentage: 50.0
+                        rejectedPercentage: 10.0
+                        total: 20
+                        done: 10
+                        rejected: 2
+                    alertEmployees: ["emp123", "emp789"]
+                    totalDeliveredNotifications: 250
+                    totalUniqueClicks: 140
+                    averageCompletionHours: 36.2
+                    channelEffectiveness:
+                      - channel: EMAIL
+                        completionRate: 70.0
+                        tasks: 100
+                      - channel: SMS
+                        completionRate: 60.0
+                        tasks: 50
+                    channelPreferences:
+                      - channel: EMAIL
+                        percentage: 40.0
+                        employees: 200
+                      - channel: WHATSAPP
+                        percentage: 25.0
+                        employees: 125
+                      - channel: SMS
+                        percentage: 20.0
+                        employees: 100
+                      - channel: MS_TEAMS
+                        percentage: 15.0
+                        employees: 75
+        '400':
+          description: Nieprawidłowy parametr expiringHours (poza zakresem)
+        '500':
+          description: Wewnętrzny błąd serwera przy liczeniu statystyk
 
 components:
 
